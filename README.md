@@ -62,6 +62,7 @@ La aplicación se monta desde `src/main.jsx` y utiliza `src/App.jsx` como compon
 - Matias Paciotti Iacchelli
 - Fausto Ramirez Alvarez
 - Valentin Tiraboschi 
+- Carl Hans Seifert
 -
 
 
