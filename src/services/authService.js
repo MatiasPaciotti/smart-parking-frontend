@@ -1,40 +1,34 @@
-// URL base del backend (para pruebas locales usar localhost propio, ej: http://localhost:3000 o 8080)
-const API_URL = 'http://localhost:5173'; //iría 'http://localhost:3000/api'; por ejemplo
+import axios from 'axios';
+
+const API_URL = 'http://localhost:8000/api/v1/auth';
 
 export const registerUser = async (userData) => {
-  // Descomentar este bloque cuando esté corriendo el backend:
-  /*
-  const response = await fetch(`${API_URL}/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      nombreApellido: userData.nombreApellido,
-      dni: userData.dni,
-      patente: userData.patente,
-      correo: userData.correo,
+  const parts = userData.nombreApellido.trim().split(/\s+/);
+  const nombre = parts[0];
+  const apellido = parts.slice(1).join(' '); 
+
+  try {
+    const response = await axios.post(`${API_URL}/register`, {
+      nombre: nombre,
+      apellido: apellido,
+      email: userData.correo.trim().toLowerCase(),
+      patente: userData.patente.toUpperCase().replace(/\s+/g, ''),
+      dni: parseInt(userData.dni, 10), 
       password: userData.password,
-    }),
-  });
+    });
 
-  const data = await response.json();
+    return response.data;
 
-  if (!response.ok) {
-    // Lanza el error devuelto por el backend (ej: "La patente ingresada ya se encuentra registrada")
-    throw new Error(data.message || 'Error al procesar el registro');
+  } catch (error) {
+    const serverMessage = 
+      error.response?.data?.detail || 
+      error.message || 
+      'Error de conexión con el servidor.';
+
+    const message = Array.isArray(serverMessage) 
+      ? serverMessage[0]?.msg 
+      : serverMessage;
+
+    throw new Error(message);
   }
-
-  return data;
-  */
-
-  // ---  TEMPORAL PARA PROBAR EN FRONTEND (Simula 1.5 seg de respuesta) ---
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  // Simulamos el caso de error de negocio si la patente es "AA123BB" (para probar la alerta)
-  if (userData.patente === 'AA123BB') {
-    throw new Error('La patente ingresada ya se encuentra registrada');
-  }
-
-  return { success: true };
 };
