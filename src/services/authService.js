@@ -42,3 +42,33 @@ export const loginUser = async ({ correo, password }) => {
     throw new Error(message);
   }
 };
+
+
+export const getUserProfile = async () => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    throw new Error('No hay una sesión iniciada.');
+  }
+
+  try {
+    const response = await axios.get(`${API_URL}/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    const serverMessage =
+      error.response?.data?.detail ||
+      error.message ||
+      'No se pudo obtener el perfil del usuario.';
+
+    throw new Error(
+      Array.isArray(serverMessage)
+        ? serverMessage[0]?.msg
+        : serverMessage
+    );
+  }
+};

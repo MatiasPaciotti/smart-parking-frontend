@@ -10,6 +10,7 @@ import {
   setRegisterSuccess,
   setRegisterError,
   clearError,
+  setLoginSuccess,
 } from '../../store/slices/authSlice';
 
 export default function LoginForm() {
@@ -56,10 +57,14 @@ export default function LoginForm() {
 
       dispatch(setLoading(true));
 
-      const data = await loginUser(formData);
+  const data = await loginUser(formData);
 
-      dispatch(setRegisterSuccess(data.user));
-      navigate('/dashboard');
+      dispatch(setLoginSuccess({
+        user: data.user,
+        token: data.access_token,
+      }));
+
+navigate('/dashboard');
 
     } catch (err) {
       if (err.name === 'ValidationError') {
