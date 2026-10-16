@@ -1,7 +1,8 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { User, IdCard, Car, Mail, Lock, LogIn, UserPlus, ArrowRight } from 'lucide-react';
+import { User, IdCard, Car, Mail, Lock, ArrowRight } from 'lucide-react';
+import FormInput from '../common/FormInput';
 import {
   setLoading,
   setRegisterSuccess,
@@ -10,7 +11,6 @@ import {
 } from '../../store/slices/authSlice';
 import { registerSchema } from './validationSchema';
 import { registerUser } from '../../services/authService';
-import logoSmartParking from '../../assets/logo.webp';
 
 export default function RegisterForm() {
   const navigate = useNavigate();
@@ -66,7 +66,6 @@ export default function RegisterForm() {
       setErrors({});
 
       dispatch(setLoading(true));
-
       const data = await registerUser(formData);
 
       setSuccessMessage('¡Registro completado! Redirigiendo...');
@@ -92,34 +91,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="w-full rounded-[28px] bg-[#0d1527]/90 border border-slate-800/80 p-5 sm:p-6 shadow-2xl backdrop-blur-md text-white font-inter">
-      
-      <div className="flex flex-col items-center justify-center mb-5">
-        <img
-          src={logoSmartParking}
-          alt="SmartParking UNSAM"
-          className="h-28 w-auto object-contain drop-shadow-md select-none pointer-events-none"
-        />
-      </div>
-
-      <div className="flex p-1 bg-[#162032] rounded-xl mb-4 border border-slate-800">
-        <button
-          type="button"
-          disabled={loading}
-          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-medium text-slate-400 hover:text-white transition-colors"
-        >
-          <LogIn className="w-4 h-4" />
-          Iniciar Sesión
-        </button>
-        <button
-          type="button"
-          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 rounded-lg shadow-sm"
-        >
-          <UserPlus className="w-4 h-4" />
-          Registrarse
-        </button>
-      </div>
-
+    <div>
       {serverError && (
         <div className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs flex items-start gap-2.5">
           <div className="flex-1 leading-snug font-medium">{serverError}</div>
@@ -134,129 +106,73 @@ export default function RegisterForm() {
 
       <form onSubmit={handleSubmit} noValidate className="space-y-3.5">
         
-        <div>
-          <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-            <User className="w-3.5 h-3.5 text-slate-400" />
-            Nombre y Apellido
-          </label>
-          <input
-            type="text"
-            name="nombreApellido"
-            value={formData.nombreApellido}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            disabled={loading}
-            placeholder="Ej. Leonardo Pisculichi"
-            className={`w-full bg-[#162032] border rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none transition-all disabled:opacity-50 ${
-              errors.nombreApellido 
-                ? 'border-rose-500 focus:ring-1 focus:ring-rose-500' 
-                : 'border-slate-700/60 focus:ring-1 focus:ring-sky-500 focus:border-sky-500'
-            }`}
-          />
-          {errors.nombreApellido && (
-            <p className="text-rose-400 text-[11px] mt-1 pl-1">{errors.nombreApellido}</p>
-          )}
-        </div>
+        <FormInput
+          label="Nombre y Apellido"
+          icon={User}
+          name="nombreApellido"
+          value={formData.nombreApellido}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          disabled={loading}
+          placeholder="Ej. Leonardo Pisculichi"
+          error={errors.nombreApellido}
+        />
 
         <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-              <IdCard className="w-3.5 h-3.5 text-slate-400" />
-              DNI
-            </label>
-            <input
-              type="text"
-              name="dni"
-              value={formData.dni}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={loading}
-              placeholder="Ej. 42345678"
-              maxLength={8}
-              className={`w-full bg-[#162032] border rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none transition-all disabled:opacity-50 ${
-                errors.dni 
-                  ? 'border-rose-500 focus:ring-1 focus:ring-rose-500' 
-                  : 'border-slate-700/60 focus:ring-1 focus:ring-sky-500 focus:border-sky-500'
-              }`}
-            />
-            {errors.dni && (
-              <p className="text-rose-400 text-[10px] mt-1 pl-1 leading-tight">{errors.dni}</p>
-            )}
-          </div>
-          <div>
-            <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-              <Car className="w-3.5 h-3.5 text-slate-400" />
-              Patente
-            </label>
-            <input
-              type="text"
-              name="patente"
-              value={formData.patente}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={loading}
-              placeholder="Ej. AA123BC"
-              maxLength={7}
-              className={`w-full bg-[#162032] border rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none uppercase transition-all disabled:opacity-50 ${
-                errors.patente 
-                  ? 'border-rose-500 focus:ring-1 focus:ring-rose-500' 
-                  : 'border-slate-700/60 focus:ring-1 focus:ring-sky-500 focus:border-sky-500'
-              }`}
-            />
-            {errors.patente && (
-              <p className="text-rose-400 text-[10px] mt-1 pl-1 leading-tight">{errors.patente}</p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-            <Mail className="w-3.5 h-3.5 text-slate-400" />
-            Correo Institucional UNSAM
-          </label>
-          <input
-            type="email"
-            name="correo"
-            value={formData.correo}
+          <FormInput
+            label="DNI"
+            icon={IdCard}
+            name="dni"
+            value={formData.dni}
             onChange={handleChange}
             onBlur={handleBlur}
             disabled={loading}
-            placeholder="usuario@estudiantes.unsam.edu.ar"
-            className={`w-full bg-[#162032] border rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none transition-all disabled:opacity-50 ${
-              errors.correo 
-                ? 'border-rose-500 focus:ring-1 focus:ring-rose-500' 
-                : 'border-slate-700/60 focus:ring-1 focus:ring-sky-500 focus:border-sky-500'
-            }`}
+            placeholder="Ej. 42345678"
+            maxLength={8}
+            error={errors.dni}
           />
-          {errors.correo && (
-            <p className="text-rose-400 text-[11px] mt-1 pl-1">{errors.correo}</p>
-          )}
-        </div>
 
-        <div>
-          <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-            <Lock className="w-3.5 h-3.5 text-slate-400" />
-            Contraseña
-          </label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
+          <FormInput
+            label="Patente"
+            icon={Car}
+            name="patente"
+            value={formData.patente}
             onChange={handleChange}
             onBlur={handleBlur}
             disabled={loading}
-            placeholder="*********"
-            className={`w-full bg-[#162032] border rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none transition-all disabled:opacity-50 ${
-              errors.password 
-                ? 'border-rose-500 focus:ring-1 focus:ring-rose-500' 
-                : 'border-slate-700/60 focus:ring-1 focus:ring-sky-500 focus:border-sky-500'
-            }`}
+            placeholder="Ej. AA123BC"
+            maxLength={7}
+            uppercase
+            error={errors.patente}
           />
-          {errors.password && (
-            <p className="text-rose-400 text-[11px] mt-1 pl-1">{errors.password}</p>
-          )}
         </div>
-        
+
+        <FormInput
+          label="Correo Institucional UNSAM"
+          icon={Mail}
+          type="email"
+          name="correo"
+          value={formData.correo}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          disabled={loading}
+          placeholder="usuario@estudiantes.unsam.edu.ar"
+          error={errors.correo}
+        />
+
+        <FormInput
+          label="Contraseña"
+          icon={Lock}
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          disabled={loading}
+          placeholder="*********"
+          error={errors.password}
+        />
+
         <div className="pt-2">
           <button
             type="submit"

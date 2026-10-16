@@ -20,15 +20,25 @@ export const registerUser = async (userData) => {
     return response.data;
 
   } catch (error) {
-    const serverMessage = 
-      error.response?.data?.detail || 
-      error.message || 
-      'Error de conexión con el servidor.';
+    const serverMessage = error.response?.data?.detail || error.message || 'Error de conexión con el servidor.';
+    const message = Array.isArray(serverMessage) ? serverMessage[0]?.msg : serverMessage;
+    throw new Error(message);
+  }
+};
 
-    const message = Array.isArray(serverMessage) 
-      ? serverMessage[0]?.msg 
-      : serverMessage;
-
+export const loginUser = async ({ correo, password }) => {
+  try {
+    const response = await axios.post(`${API_URL}/login`, {
+      email: correo.trim().toLowerCase(),
+      password: password,
+    });
+    if (response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
+    }
+    return response.data;
+  } catch (error) {
+    const serverMessage = error.response?.data?.detail || error.message || 'Correo o contraseña incorrectos.';
+    const message = Array.isArray(serverMessage) ? serverMessage[0]?.msg : serverMessage;
     throw new Error(message);
   }
 };
