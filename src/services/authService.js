@@ -2,6 +2,23 @@ import axios from 'axios';
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api/v1/auth`;
 
+export const loginUser = async ({ correo, password }) => {
+  try {
+    const response = await axios.post(`${API_URL}/login`, {
+      email: correo.trim().toLowerCase(),
+      password: password,
+    });
+    if (response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
+    }
+    return response.data;
+  } catch (error) {
+    const serverMessage = error.response?.data?.detail || error.message || 'Correo o contraseña incorrectos.';
+    const message = Array.isArray(serverMessage) ? serverMessage[0]?.msg : serverMessage;
+    throw new Error(message);
+  }
+};
+
 export const registerUser = async (userData) => {
   const parts = userData.nombreApellido.trim().split(/\s+/);
   const nombre = parts[0];
@@ -30,5 +47,35 @@ export const registerUser = async (userData) => {
       : serverMessage;
 
     throw new Error(message);
+  }
+};
+
+
+export const getUserProfile = async () => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    throw new Error('No hay una sesión iniciada.');
+  }
+
+  try {
+    const response = await axios.get(`${API_URL}/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    const serverMessage =
+      error.response?.data?.detail ||
+      error.message ||
+      'No se pudo obtener el perfil del usuario.';
+
+    throw new Error(
+      Array.isArray(serverMessage)
+        ? serverMessage[0]?.msg
+        : serverMessage
+    );
   }
 };

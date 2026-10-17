@@ -1,12 +1,42 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../store/slices/authSlice';
+import { logout, setRegisterSuccess } from '../store/slices/authSlice';
+import { getUserProfile } from '../services/authService';
 
 export default function Dashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+
+  const token = useSelector((state) => state.auth.token);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadProfile = async () => {
+      if (!token) {
+        return;
+      }
+
+      try {
+        const profile = await getUserProfile();
+
+        if (!cancelled) {
+          dispatch(setRegisterSuccess(profile));
+        }
+      } catch (error) {
+        console.error('Error al cargar el perfil:', error.message);
+      }
+    };
+
+    loadProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token, dispatch]);
+
 
   const handleLogout = () => {
     dispatch(logout());
