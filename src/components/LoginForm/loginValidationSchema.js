@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-const unsamEmailRegex = /^[a-zA-Z0-9._%+-]+@(unsam\.edu\.ar|estudiantes\.unsam\.edu\.ar)$/i;
+const unsamEmailRegex = /^[a-zA-Z0-9._%+-]+@(unsam\.edu\.ar|estudiantes\.unsam\.edu\.ar|unsam-bue\.edu\.ar)$/i;
 
 export const loginSchema = Yup.object().shape({
   correo: Yup.string()
