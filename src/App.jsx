@@ -37,7 +37,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AuthPage />} />
-
         <Route
           path="/dashboard"
           element={
