@@ -7,10 +7,9 @@ import { loginSchema } from './loginValidationSchema';
 import { loginUser } from '../../services/authService';
 import {
   setLoading,
-  setRegisterSuccess,
+  setLoginSuccess,
   setRegisterError,
   clearError,
-  setLoginSuccess,
 } from '../../store/slices/authSlice';
 
 export default function LoginForm() {
@@ -57,14 +56,21 @@ export default function LoginForm() {
 
       dispatch(setLoading(true));
 
-  const data = await loginUser(formData);
+      const data = await loginUser(formData);
 
-      dispatch(setLoginSuccess({
-        user: data.user,
-        token: data.access_token,
-      }));
+      dispatch(
+        setLoginSuccess({
+          user: data.user,
+          token: data.access_token || data.token,
+        })
+      );
 
-navigate('/dashboard');
+      const userRole = data.user?.role;
+      if (userRole === 'admin') {
+        navigate('/guard');      
+      } else {
+        navigate('/dashboard');  
+      }
 
     } catch (err) {
       if (err.name === 'ValidationError') {
