@@ -40,6 +40,8 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     dispatch(logout());
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     navigate('/'); 
   };
 

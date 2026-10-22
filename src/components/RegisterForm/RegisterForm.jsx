@@ -10,7 +10,6 @@ import {
 } from '../../store/slices/authSlice';
 import { registerSchema } from './validationSchema';
 import { registerUser } from '../../services/authService';
-import logoSmartParking from '../../assets/logo.webp';
 
 export default function RegisterForm() {
   const navigate = useNavigate();
@@ -94,32 +93,6 @@ export default function RegisterForm() {
   return (
     <div className="w-full rounded-[28px] bg-[#0d1527]/90 shadow-2xl backdrop-blur-md text-white font-inter">
       
-      {/* <div className="flex flex-col items-center justify-center mb-5">
-        <img
-          src={logoSmartParking}
-          alt="SmartParking UNSAM"
-          className="h-28 w-auto object-contain drop-shadow-md select-none pointer-events-none"
-        />
-      </div>
-
-      <div className="flex p-1 bg-[#162032] rounded-xl mb-4 border border-slate-800">
-        <button
-          type="button"
-          disabled={loading}
-          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-medium text-slate-400 hover:text-white transition-colors"
-        >
-          <LogIn className="w-4 h-4" />
-          Iniciar Sesión
-        </button>
-        <button
-          type="button"
-          className="flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 rounded-lg shadow-sm"
-        >
-          <UserPlus className="w-4 h-4" />
-          Registrarse
-        </button>
-      </div> */}
-
       {serverError && (
         <div className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs flex items-start gap-2.5">
           <div className="flex-1 leading-snug font-medium">{serverError}</div>

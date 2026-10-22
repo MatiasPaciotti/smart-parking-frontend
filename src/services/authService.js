@@ -11,6 +11,9 @@ export const loginUser = async ({ correo, password }) => {
     if (response.data.access_token) {
       localStorage.setItem('token', response.data.access_token);
     }
+    if (response.data.user) {
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
     return response.data;
   } catch (error) {
     const serverMessage = error.response?.data?.detail || error.message || 'Correo o contraseña incorrectos.';
