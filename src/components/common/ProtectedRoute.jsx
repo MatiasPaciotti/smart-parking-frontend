@@ -20,6 +20,12 @@ export default function ProtectedRoute({ allowedRoles, children }) {
     }
   }
 
+  if (!currentRole) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return <Navigate to="/" replace />;
+  }
+
   if (allowedRoles && allowedRoles.length > 0) {
     const isAllowed = allowedRoles.includes(currentRole);
 

@@ -17,8 +17,10 @@ function AuthPage() {
       if (user?.role === 'admin') {
         return <Navigate to="/guard" replace />;
       }
-      return <Navigate to="/dashboard" replace />;
-    } catch {
+      if (user?.role === 'user') {
+        return <Navigate to="/dashboard" replace />;
+      }
+    } catch (err) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     }
