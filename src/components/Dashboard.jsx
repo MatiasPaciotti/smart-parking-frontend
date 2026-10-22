@@ -79,7 +79,9 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/'); 
   };
 
   return (
