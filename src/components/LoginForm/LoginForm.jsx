@@ -7,7 +7,7 @@ import { loginSchema } from './loginValidationSchema';
 import { loginUser } from '../../services/authService';
 import {
   setLoading,
-  setRegisterSuccess,
+  setLoginSuccess,
   setRegisterError,
   clearError,
 } from '../../store/slices/authSlice';
@@ -58,7 +58,12 @@ export default function LoginForm() {
 
       const data = await loginUser(formData);
 
-      dispatch(setRegisterSuccess(data.user));
+      dispatch(
+        setLoginSuccess({
+          user: data.user,
+          token: data.access_token || data.token,
+        })
+      );
 
       const userRole = data.user?.role;
       if (userRole === 'admin') {

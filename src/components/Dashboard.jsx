@@ -9,8 +9,8 @@ import ParkingLotSelector from './common/ParkingLotSelector';
 export default function Dashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
-  const token = useSelector((state) => state.auth.token);
+  const { user, token: reduxToken } = useSelector((state) => state.auth);
+  const token = reduxToken || localStorage.getItem('token');
 
   const [parkingLots, setParkingLots] = useState([]);
   const [selectedLotId, setSelectedLotId] = useState(() => {
@@ -94,6 +94,7 @@ export default function Dashboard() {
             <h2 className="text-xl font-bold font-outfit">SmartParking UNSAM</h2>
           </div>
           <button
+            type="button"
             onClick={handleLogout}
             className="text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 transition-colors cursor-pointer"
           >
