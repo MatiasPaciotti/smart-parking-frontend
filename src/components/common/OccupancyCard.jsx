@@ -1,8 +1,8 @@
 import React from 'react';
-import { Activity } from 'lucide-react';
+import { Activity, RotateCw } from 'lucide-react';
 
-export default function OccupancyCard({ occupancyData, loading = false, className = '' }) {
-  if (loading) {
+export default function OccupancyCard({ occupancyData, loading = false, onRefresh, className = '' }) {
+  if (loading && !occupancyData) {
     return (
       <div className={`w-full bg-[#0d1527] border border-slate-800 rounded-3xl p-5 shadow-xl animate-pulse space-y-4 ${className}`}>
         <div className="h-6 bg-slate-800 rounded w-2/3"></div>
@@ -12,7 +12,7 @@ export default function OccupancyCard({ occupancyData, loading = false, classNam
     );
   }
 
-  if (!occupancyData || !occupancyData.parking_lot) {
+  if (!occupancyData) {
     return (
       <div className="w-full bg-[#0d1527] border border-slate-800 rounded-3xl p-5 text-center text-slate-400 text-xs">
         No hay datos de ocupación disponibles
@@ -21,7 +21,6 @@ export default function OccupancyCard({ occupancyData, loading = false, classNam
   }
 
   const {
-    parking_lot = {},
     capacity = 0,
     occupied = 0,
     available = 0,
@@ -58,34 +57,37 @@ export default function OccupancyCard({ occupancyData, loading = false, classNam
 
   const lightConfig = getTrafficLightConfig(traffic_light);
 
-  const radius = 40;
+  const radius = 38;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (occupancy_percentage / 100) * circumference;
 
   return (
     <div className={`w-full bg-[#0d1527] border border-slate-800/90 rounded-3xl p-4 sm:p-5 shadow-2xl text-white font-inter ${className}`}>
       
-      <div className="flex items-start justify-between gap-2.5 mb-5">
-        <div className="flex items-start gap-2.5 min-w-0">
-          <Activity className="w-5 h-5 text-slate-300 shrink-0 mt-0.5" />
-          <h3 className="text-base font-bold font-outfit text-white leading-tight break-words">
-            Estacionamiento {parking_lot?.name || ''}
+      <div className="flex items-center justify-between gap-2 mb-5">
+        <div className="flex items-center gap-2 min-w-0">
+          <Activity className="w-5 h-5 text-slate-300 shrink-0" />
+          <h3 className="text-sm sm:text-base font-bold font-outfit text-white leading-tight">
+            Ocupación
           </h3>
         </div>
 
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 shrink-0">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          EN VIVO
-        </span>
+        <button
+          type="button"
+          onClick={onRefresh}
+          disabled={loading}
+          title="Actualizar datos de ocupación"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wider bg-emerald-950/80 hover:bg-emerald-900/90 text-emerald-400 border border-emerald-500/30 shrink-0 transition-all cursor-pointer active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          <RotateCw className={`w-3 h-3 text-emerald-400 ${loading ? 'animate-spin' : ''}`} />
+          <span>{loading ? 'CARGANDO...' : 'ACTUALIZAR'}</span>
+        </button>
       </div>
 
-      <div className="grid grid-cols-12 gap-3 sm:gap-4 items-center mb-5">
+      <div className="grid grid-cols-12 gap-2 sm:gap-4 items-center mb-5">
         
         <div className="col-span-5 flex items-center justify-center relative">
-          <svg className="w-28 h-28 sm:w-36 sm:h-36 transform -rotate-90" viewBox="0 0 100 100">
+          <svg className="w-24 h-24 sm:w-32 sm:h-32 transform -rotate-90" viewBox="0 0 100 100">
             <circle
               cx="50"
               cy="50"
@@ -108,25 +110,25 @@ export default function OccupancyCard({ occupancyData, loading = false, classNam
               className="transition-all duration-700 ease-out"
             />
           </svg>
-          <span className="absolute text-2xl sm:text-3xl font-extrabold font-outfit text-white tracking-tight">
+          <span className="absolute text-xl sm:text-2xl font-extrabold font-outfit text-white tracking-tight">
             {Math.round(occupancy_percentage)}%
           </span>
         </div>
 
         <div className="col-span-7 space-y-2">
-          <div className="flex items-center justify-between gap-2 bg-[#141d2e] border border-slate-800/80 px-3.5 py-2.5 rounded-xl">
-            <span className="text-sm sm:text-base font-bold text-white font-outfit">{available}</span>
-            <span className="text-xs text-slate-300 font-medium whitespace-nowrap">Lugares libres</span>
+          <div className="flex items-center justify-between gap-1 bg-[#141d2e] border border-slate-800/80 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl">
+            <span className="text-xs sm:text-base font-bold text-white font-outfit shrink-0">{available}</span>
+            <span className="text-[10px] sm:text-xs text-slate-300 font-medium truncate">Lugares libres</span>
           </div>
 
-          <div className="flex items-center justify-between gap-2 bg-[#141d2e] border border-slate-800/80 px-3.5 py-2.5 rounded-xl">
-            <span className="text-sm sm:text-base font-bold text-white font-outfit">{occupied}</span>
-            <span className="text-xs text-slate-300 font-medium whitespace-nowrap">Ocupados</span>
+          <div className="flex items-center justify-between gap-1 bg-[#141d2e] border border-slate-800/80 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl">
+            <span className="text-xs sm:text-base font-bold text-white font-outfit shrink-0">{occupied}</span>
+            <span className="text-[10px] sm:text-xs text-slate-300 font-medium truncate">Ocupados</span>
           </div>
 
-          <div className="flex items-center justify-between gap-2 bg-[#141d2e] border border-slate-800/80 px-3.5 py-2.5 rounded-xl">
-            <span className="text-sm sm:text-base font-bold text-white font-outfit">{capacity}</span>
-            <span className="text-xs text-slate-300 font-medium whitespace-nowrap">Capacidad total</span>
+          <div className="flex items-center justify-between gap-1 bg-[#141d2e] border border-slate-800/80 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl">
+            <span className="text-xs sm:text-base font-bold text-white font-outfit shrink-0">{capacity}</span>
+            <span className="text-[10px] sm:text-xs text-slate-300 font-medium truncate">Capacidad total</span>
           </div>
         </div>
 
@@ -140,7 +142,7 @@ export default function OccupancyCard({ occupancyData, loading = false, classNam
           ></div>
         </div>
 
-        <div className="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
+        <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 pt-0.5">
           <span>0</span>
           <div className="flex items-center gap-1.5 font-medium">
             <span>{lightConfig.text}</span>

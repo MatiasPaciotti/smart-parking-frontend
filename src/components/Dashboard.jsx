@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout, setRegisterSuccess } from '../store/slices/authSlice';
@@ -11,9 +11,9 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const token = useSelector((state) => state.auth.token);
-  const [selectedLotId, setSelectedLotId] = useState('rodriguez-pena');
+  const [selectedLotId, setSelectedLotId] = useState(1);
   const [occupancyData, setOccupancyData] = useState(null);
-  const [loadingOccupancy, setLoadingOccupancy] = useState(true);
+  const [loadingOccupancy, setLoadingOccupancy] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -41,41 +41,25 @@ export default function Dashboard() {
     };
   }, [token, dispatch]);
 
- useEffect(() => {
-    if (!selectedLotId) return;
+  const fetchOccupancy = useCallback(async (lotId) => {
+    const targetLotId = lotId || selectedLotId;
+    if (!targetLotId) return;
 
-    let cancelled = false;
-
-    const fetchOccupancy = async (showLoading = false) => {
-      if (showLoading) setLoadingOccupancy(true);
-      try {
-        const data = await getParkingLotOccupancy(selectedLotId);
-        if (!cancelled) {
-          setOccupancyData(data);
-        }
-      } catch (error) {
-        console.error('Error al cargar la ocupación desde la API:', error);
-        if (!cancelled) {
-          setOccupancyData(null);
-        }
-      } finally {
-        if (!cancelled && showLoading) {
-          setLoadingOccupancy(false);
-        }
-      }
-    };
-
-    fetchOccupancy(true);
-
-    const intervalId = setInterval(() => {
-      fetchOccupancy(false);
-    }, 10000);
-
-    return () => {
-      cancelled = true;
-      clearInterval(intervalId);
-    };
+    setLoadingOccupancy(true);
+    try {
+      const data = await getParkingLotOccupancy(targetLotId);
+      setOccupancyData(data);
+    } catch (error) {
+      console.error('Error al consultar la ocupación desde el backend:', error);
+      setOccupancyData(null);
+    } finally {
+      setLoadingOccupancy(false);
+    }
   }, [selectedLotId]);
+
+  useEffect(() => {
+    fetchOccupancy(selectedLotId);
+  }, [selectedLotId, fetchOccupancy]);
   
   const handleLogout = () => {
     dispatch(logout());
@@ -91,6 +75,7 @@ export default function Dashboard() {
             ¡Hola, {user?.full_name || 'Usuario'}!
           </h2>
           <button
+            type="button"
             onClick={handleLogout}
             className="text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 transition-colors cursor-pointer"
           >
@@ -101,13 +86,14 @@ export default function Dashboard() {
         <OccupancyCard
           occupancyData={occupancyData}
           loading={loadingOccupancy}
+          onRefresh={() => fetchOccupancy(selectedLotId)}
         />
 
         <div className="p-4 sm:p-5 rounded-3xl bg-[#0d1527] border border-slate-800/90 shadow-2xl space-y-1">
-          <p className="text-xs text-slate-400">Sesión activa</p>
-          <h3 className="text-base font-bold text-white font-outfit">{user?.full_name || 'Usuario'}</h3>
-          <p className="text-xs text-slate-400">{user?.email}</p>
-          {user?.dni && <p className="text-[11px] text-slate-500 pt-1">DNI: {user?.dni}</p>}
+          <p className="text-xs text-slate-400">Tarjeta de prueba</p>
+          <h3 className="text-base font-bold text-white font-outfit">{user?.full_name || 'Prueba Prueba'}</h3>
+          <p className="text-xs text-slate-400">{user?.email || 'prueba@unsam.edu.ar'}</p>
+          <p className="text-[11px] text-slate-500 pt-1">DNI: {user?.dni || '12345678'}</p>
         </div>
 
       </div>
