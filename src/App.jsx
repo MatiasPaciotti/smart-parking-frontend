@@ -42,13 +42,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AuthPage />} />
-
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute allowedRoles={['user']}>
               <main className="min-h-screen w-full flex items-center justify-center p-4 py-6 sm:py-10 overflow-y-auto">
-                <div className="w-full max-w-[386px] my-auto">
+                <div className="min-h-screen w-full">
                   <Dashboard />
                 </div>
               </main>
@@ -61,7 +60,7 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <main className="min-h-screen w-full flex items-center justify-center p-4 py-6 sm:py-10 overflow-y-auto">
-                <div className="w-full max-w-[386px] my-auto">
+                <div className="min-h-screen w-full">
                   <GuardDashboard />
                 </div>
               </main>
