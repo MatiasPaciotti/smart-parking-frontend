@@ -1,0 +1,34 @@
+[33m0425a11[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mhu-13/ocupacion-adminn-V[m[33m, [m[1;31morigin/hu-13/ocupacion-adminn-V[m[33m, [m[1;31morigin/dev[m[33m, [m[1;32mhu-13/ocupacion_admin_V[m[33m, [m[1;32mdev[m[33m)[m Merge pull request #18 from MatiasPaciotti/feature/hu-04-porcentaje-ocupacion-F
+[33m7d2b87f[m fix: resolver conflictos de merge y unificar diseño final responsive del dashboard
+[33mba66417[m Merge pull request #19 from MatiasPaciotti/fix/correccion-de-rutas-y-tokens
+[33m91a579a[m Correccion de errores de tokens y rutas
+[33macdce80[m Merge pull request #17 from MatiasPaciotti/feature/hu-03-frontend-F
+[33m3d640e6[m Merge branch 'dev' into feature/hu-03-frontend-F
+[33m34056c9[m Merge pull request #16 from MatiasPaciotti/feature/hu-09-guardia-F
+[33m6998f23[m feat(hu-04): arreglo de tarjeta de ocupacion
+[33mf0b9c69[m feat(frontend): implementacion del frontend de la visualizacion de ocupacion(hu-04)
+[33m7ea2c98[m feat(hu-03) implementación de selector de estacionamiento de HU-03
+[33m62bd27f[m feathu-09): control de acceso basado en roles (admin/user) y dashboard guardia)
+[33md897b16[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Merge pull request #15 from MatiasPaciotti/dev
+[33m24a0bc4[m Merge pull request #14 from MatiasPaciotti/feature/HU-2
+[33m7360e1a[m feat(HU-2): implement login functionality with validation and user profile retrieval
+[33m4416f13[m Merge pull request #6 from MatiasPaciotti/dev
+[33me4fcf01[m Merge pull request #9 from MatiasPaciotti/feature/HU-01-frontend
+[33m8967f26[m[33m ([m[1;31morigin/feature/HU-02-frontend[m[33m)[m feat: completar autenticacion y proteger dashboard
+[33m25fd0c9[m feat(login): implementacion de inicio de sesion institucional (HU-02)
+[33m373eecf[m fix: corrección de iconos, rutas y url del back en el frontend
+[33m4493217[m fix: correccion RegisterForm/ , implementacion de yup,axios y redux toolkit
+[33m5c0fb42[m feat(registro): maquetado, validaciones en tiempo real y feedback (HU-01)
+[33md60b35d[m Merge pull request #8 from MatiasPaciotti/feature/SCRUM-39-.env-file
+[33mcca6bcf[m Merge pull request #7 from MatiasPaciotti/feature/SCRUM-38-dependencies
+[33m3d1586e[m add .env to .gitignore to prevent sensitive information from being tracked
+[33m50a390c[m wrap App component with BrowserRouter for routing support
+[33mface0bf[m chore: update dependencies and configure Tailwind CSS
+[33m0977f2a[m Merge pull request #5 from MatiasPaciotti/agregar_nombre_valentin
+[33m5ad7a45[m Merge branch 'dev' into agregar_nombre_valentin
+[33m6730d8e[m Merge pull request #4 from MatiasPaciotti/feature/agregar-nombre-carl
+[33m40c9c24[m nombre añadido a README
+[33m91da80b[m agregar_nombre_valentin
+[33m2a8d04e[m Merge pull request #2 from MatiasPaciotti/feature/agregar-nombre-fausto
+[33m1f264c3[m  agregar nombre de Fausto al README
+[33m11332ad[m Initialize smart parking frontend with React and Vite
