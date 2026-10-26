@@ -1,18 +1,15 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { User, IdCard, Car, Mail, Lock, LogIn, UserPlus, ArrowRight } from 'lucide-react';
 import {
   setLoading,
-  setRegisterSuccess,
   setRegisterError,
   clearError,
 } from '../../store/slices/authSlice';
 import { registerSchema } from './validationSchema';
 import { registerUser } from '../../services/authService';
 
-export default function RegisterForm() {
-  const navigate = useNavigate();
+export default function RegisterForm({ onRegistered }) {
   const dispatch = useDispatch();
   const { loading, error: serverError } = useSelector((state) => state.auth);
 
@@ -66,14 +63,11 @@ export default function RegisterForm() {
 
       dispatch(setLoading(true));
 
-      const data = await registerUser(formData);
+      await registerUser(formData);
 
-      setSuccessMessage('¡Registro completado! Redirigiendo...');
+      setSuccessMessage('¡Registro completado! Verificá tu correo para continuar.');
 
-      setTimeout(() => {
-        dispatch(setRegisterSuccess(data.user));
-        navigate('/dashboard');
-      }, 1000);
+      setTimeout(() => onRegistered(formData.correo), 2500);
 
     } catch (err) {
       if (err.name === 'ValidationError') {
@@ -250,7 +244,7 @@ export default function RegisterForm() {
               </>
             ) : (
               <>
-                Registrar cuenta e ingresar
+                Registrar cuenta
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
