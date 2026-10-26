@@ -71,7 +71,7 @@ export default function GuardDashboard() {
     // Polling keeps the guard panel current when another terminal records a movement.
     const intervalId = window.setInterval(() => {
       if (document.visibilityState === 'visible') fetchOccupancy(selectedLotId);
-    }, 5000);
+    }, 90000);
 
     const refreshOnFocus = () => {
       if (document.visibilityState === 'visible') fetchOccupancy(selectedLotId);
