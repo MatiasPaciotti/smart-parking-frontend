@@ -4,11 +4,13 @@ import AuthCard from './components/common/AuthCard';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import LoginForm from './components/LoginForm/LoginForm';
 import RegisterForm from './components/RegisterForm/RegisterForm';
+import EmailVerificationForm from './components/EmailVerification';
 import Dashboard from './components/Dashboard';
 import GuardDashboard from './components/GuardDashboard/GuardDashboard';
 
 function AuthPage() {
   const [activeTab, setActiveTab] = useState('login');
+  const [pendingEmail, setPendingEmail] = useState(null);
 
   const token = localStorage.getItem('token');
   if (token) {
@@ -26,11 +28,30 @@ function AuthPage() {
     }
   }
 
+  const handleTabChange = (tab) => {
+    setPendingEmail(null);
+    setActiveTab(tab);
+  };
+
+  const handleVerified = () => {
+    setPendingEmail(null);
+    setActiveTab('login');
+  };
+
+  let content;
+  if (pendingEmail) {
+    content = <EmailVerificationForm email={pendingEmail} onVerified={handleVerified} />;
+  } else if (activeTab === 'login') {
+    content = <LoginForm />;
+  } else {
+    content = <RegisterForm onRegistered={setPendingEmail} />;
+  }
+
   return (
     <main className="min-h-screen w-full flex items-center justify-center p-4 py-6 sm:py-10 overflow-y-auto">
       <div className="w-full max-w-[386px] my-auto">
-        <AuthCard activeTab={activeTab} onTabChange={setActiveTab}>
-          {activeTab === 'login' ? <LoginForm /> : <RegisterForm />}
+        <AuthCard activeTab={activeTab} onTabChange={handleTabChange}>
+          {content}
         </AuthCard>
       </div>
     </main>

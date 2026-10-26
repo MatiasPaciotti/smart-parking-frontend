@@ -54,6 +54,36 @@ export const registerUser = async (userData) => {
 };
 
 
+const buildRequestError = (error, fallbackMessage) => {
+  const detail = error.response?.data?.detail;
+  const requestError = new Error(typeof detail === 'string' ? detail : fallbackMessage);
+  requestError.status = error.response?.status;
+  return requestError;
+};
+
+export const verifyEmail = async ({ email, code }) => {
+  try {
+    const response = await axios.post(`${API_URL}/verify-email`, {
+      email: email.trim().toLowerCase(),
+      code,
+    });
+    return response.data;
+  } catch (error) {
+    throw buildRequestError(error, 'No se pudo verificar el código. Revisá tu conexión e intentá nuevamente.');
+  }
+};
+
+export const resendVerification = async ({ email }) => {
+  try {
+    const response = await axios.post(`${API_URL}/resend-verification`, {
+      email: email.trim().toLowerCase(),
+    });
+    return response.data;
+  } catch (error) {
+    throw buildRequestError(error, 'No se pudo enviar el código. Intentá nuevamente más tarde.');
+  }
+};
+
 export const getUserProfile = async () => {
   const token = localStorage.getItem('token');
 
