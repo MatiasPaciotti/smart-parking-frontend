@@ -7,6 +7,8 @@ import RegisterForm from './components/RegisterForm/RegisterForm';
 import EmailVerificationForm from './components/EmailVerification';
 import Dashboard from './components/Dashboard';
 import GuardDashboard from './components/GuardDashboard/GuardDashboard';
+import AccessPass from './components/AccessPass/AccessPass';
+
 
 function AuthPage() {
   const [activeTab, setActiveTab] = useState('login');
@@ -85,6 +87,15 @@ function App() {
                   <GuardDashboard />
                 </div>
               </main>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/access-pass"
+          element={
+            <ProtectedRoute allowedRoles={['user']}>
+              <AccessPass />
             </ProtectedRoute>
           }
         />
