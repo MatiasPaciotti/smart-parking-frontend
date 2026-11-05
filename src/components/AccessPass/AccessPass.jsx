@@ -18,13 +18,13 @@ export default function AccessPass() {
   const [error, setError] = useState(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const timerRef = useRef(null);
-
+  const hasRequestedRef = useRef(false); 
   const rawLotId = location.state?.parkingLotId || localStorage.getItem('preferred_parking_lot_id');
   const lotId = (rawLotId && rawLotId !== 'undefined') ? rawLotId : 'rodriguez-pena';
 
   useEffect(() => {
-    let cancelled = false;
-
+    if (hasRequestedRef.current) return;
+    hasRequestedRef.current = true;
     const generate = async () => {
       try {
         if (!user?.dni || (!user?.plate && !user?.patente)) {
@@ -33,27 +33,19 @@ export default function AccessPass() {
             dispatch(setRegisterSuccess(profile));
             localStorage.setItem('user', JSON.stringify(profile));
           } catch (profileErr) {
-            console.warn('No se pudo refrescar el perfil:', profileErr);
+            console.warn('No se pudo cargar el perfil:', profileErr);
           }
         }
-
         const data = await generateAccessPass(lotId);
-        
-        if (!cancelled) {
-          setPass(data);
-          setSecondsLeft(data.expires_in_seconds || 300);
-        }
+        setPass(data);
+        setSecondsLeft(data.expires_in_seconds || 300);
       } catch (err) {
-        if (!cancelled) {
-          setError(err.message || 'No se pudo generar el pase.');
-        }
+        setError(err.message || 'No se pudo generar el pase.');
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     };
-
     generate();
-    return () => { cancelled = true; };
   }, [lotId, dispatch]);
 
   useEffect(() => {
