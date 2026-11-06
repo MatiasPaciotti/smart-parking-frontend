@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { Clock, ArrowRight } from 'lucide-react';
-import { generateAccessPass } from '../../services/accessPassService';
+import { generateAccessPass, generateExitPass } from '../../services/accessPassService';
 import { getUserProfile } from '../../services/authService';
 import { setRegisterSuccess } from '../../store/slices/authSlice';
 
@@ -17,26 +17,39 @@ export default function AccessPass() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
+
   const timerRef = useRef(null);
-  const hasRequestedRef = useRef(false); 
+  const hasRequestedRef = useRef(false);
+
+  const isExit = location.state?.isExit ?? Boolean(user?.is_on_campus);
   const rawLotId = location.state?.parkingLotId || localStorage.getItem('preferred_parking_lot_id');
   const lotId = (rawLotId && rawLotId !== 'undefined') ? rawLotId : 'rodriguez-pena';
 
   useEffect(() => {
     if (hasRequestedRef.current) return;
     hasRequestedRef.current = true;
+
     const generate = async () => {
       try {
         if (!user?.dni || (!user?.plate && !user?.patente)) {
           try {
             const profile = await getUserProfile();
-            dispatch(setRegisterSuccess(profile));
-            localStorage.setItem('user', JSON.stringify(profile));
+            const saved = JSON.parse(localStorage.getItem('user')) || {};
+            const fullProfile = {
+              ...profile,
+              is_on_campus: profile.is_on_campus !== undefined ? profile.is_on_campus : Boolean(saved.is_on_campus)
+            };
+            dispatch(setRegisterSuccess(fullProfile));
+            localStorage.setItem('user', JSON.stringify(fullProfile));
           } catch (profileErr) {
-            console.warn('No se pudo cargar el perfil:', profileErr);
+            console.warn('No se pudo refrescar el perfil:', profileErr);
           }
         }
-        const data = await generateAccessPass(lotId);
+
+        const data = isExit 
+          ? await generateExitPass() 
+          : await generateAccessPass(lotId);
+        
         setPass(data);
         setSecondsLeft(data.expires_in_seconds || 300);
       } catch (err) {
@@ -45,8 +58,9 @@ export default function AccessPass() {
         setLoading(false);
       }
     };
+
     generate();
-  }, [lotId, dispatch]);
+  }, []);
 
   useEffect(() => {
     if (secondsLeft <= 0) return;
@@ -75,6 +89,7 @@ export default function AccessPass() {
 
   const plate = pass?.plate || user?.plate || user?.patente || 'Sin patente';
   const dni = user?.dni;
+
   const getPassCode = () => {
     if (!pass?.qr_token) return '';
     const parts = pass.qr_token.split('.');
@@ -100,9 +115,11 @@ export default function AccessPass() {
       error.toLowerCase().includes('token') || 
       error.toLowerCase().includes('sesión') || 
       error.toLowerCase().includes('vencido');
+
     const displayMessage = isTokenError
       ? `${error}. Probá cerrando sesión y volviendo a ingresar.`
       : error;
+
     return (
       <div className="min-h-screen flex items-center justify-center px-4 font-inter">
         <div className="w-full max-w-sm p-6 rounded-3xl bg-[#0d1527]/90 border border-red-500/30 shadow-2xl backdrop-blur-md text-center space-y-4">
@@ -126,7 +143,7 @@ export default function AccessPass() {
       <div className="w-full max-w-sm p-6 sm:p-8 rounded-3xl bg-[#0a1628]/95 border border-sky-500/30 shadow-2xl backdrop-blur-md flex flex-col items-center space-y-5">
         
         <h1 className="text-xl sm:text-2xl font-bold font-outfit text-white text-center leading-tight">
-          Pase de Acceso al<br />Estacionamiento
+          {isExit ? 'Pase de Egreso del' : 'Pase de Acceso al'}<br />Estacionamiento
         </h1>
 
         <div className={`p-3 bg-white rounded-xl shadow-lg transition-opacity ${isExpired ? 'opacity-30' : ''}`}>
