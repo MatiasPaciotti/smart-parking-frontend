@@ -6,6 +6,7 @@ import { getUserProfile } from '../../services/authService';
 import { getParkingLots, getParkingLotOccupancy } from '../../services/parkingLotService';
 import ParkingLotSelector from '../common/ParkingLotSelector';
 import OccupancyCard from '../common/OccupancyCard';
+import GuestVehiclesCard from './GuestVehiclesCard';
 import logo from '../../assets/logo.webp';
 
 export default function GuardDashboard() {
@@ -196,6 +197,12 @@ export default function GuardDashboard() {
             </div>
           </div>
         </div>
+
+        <GuestVehiclesCard
+          parkingLotId={selectedLotId}
+          occupancyData={occupancyData}
+          onChange={() => fetchOccupancy(selectedLotId)}
+        />
       </div>
     </div>
   );

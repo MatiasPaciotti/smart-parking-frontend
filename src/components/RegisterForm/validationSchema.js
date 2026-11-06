@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 
 export const unsamEmailRegex =/^[a-zA-Z0-9._%+-]+@(unsam\.edu\.ar|estudiantes\.unsam\.edu\.ar|unsam-bue\.edu\.ar)$/i;
-const patentRegex = /^([A-Z]{3}[0-9]{3}|[A-Z]{2}[0-9]{3}[A-Z]{2})$/;
+export const patentRegex = /^([A-Z]{3}[0-9]{3}|[A-Z]{2}[0-9]{3}[A-Z]{2})$/;
 const dniRegex = /^[0-9]{7,8}$/;
 
 export const registerSchema = Yup.object().shape({
