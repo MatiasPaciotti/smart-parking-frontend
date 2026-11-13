@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CheckCircle2, CircleAlert, QrCode, ScanLine, X } from 'lucide-react';
-import { scanEntryQr } from '../../services/entryQrService';
+import { scanParkingQr } from '../../services/entryQrService';
 
 function cameraErrorMessage(error) {
   if (typeof window === 'undefined' || !window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
@@ -45,7 +45,7 @@ export default function AdminQrScanner({ onEntryRegistered }) {
     setScanError('');
     setResult(null);
     try {
-      const entry = await scanEntryQr(qrToken);
+      const entry = await scanParkingQr(qrToken);
       setResult(entry);
       setManualCode('');
       await onEntryRegistered?.(entry);
@@ -169,7 +169,7 @@ export default function AdminQrScanner({ onEntryRegistered }) {
             <div className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400" />
               <div className="min-w-0">
-                <p className="text-sm font-bold text-emerald-200">Ingreso registrado</p>
+                <p className="text-sm font-bold text-emerald-200">{result.event_type === "exit" ? "Egreso registrado" : "Ingreso registrado"}</p>
                 <p className="mt-1 text-xs text-slate-300">{result.message}</p>
                 <div className="mt-3 break-all border-t border-emerald-500/15 pt-3 text-xs text-slate-300">
                   {result.full_name && <p className="font-semibold text-white">{result.full_name}</p>}
@@ -226,7 +226,7 @@ export default function AdminQrScanner({ onEntryRegistered }) {
           {checking ? '...' : 'Procesar'}
         </button>
       </div>
-      {checking && <p className="mt-2 animate-pulse text-center text-[11px] text-cyan-300">Registrando ingreso…</p>}
+      {checking && <p className="mt-2 animate-pulse text-center text-[11px] text-cyan-300">Registrando movimiento…</p>}
     </section>
   );
 }
