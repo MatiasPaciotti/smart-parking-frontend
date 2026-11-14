@@ -16,7 +16,14 @@ function cameraErrorMessage(error) {
   if (error?.name === 'NotReadableError' || error?.name === 'TrackStartError') {
     return 'La cámara está ocupada por otra aplicación. Cerrala e intentá nuevamente.';
   }
-  return 'No se pudo abrir la cámara.';
+  if (error === false) {
+    return 'El navegador no pudo iniciar la vista previa. Abrí el sitio directamente en Safari (iPhone) o Chrome (Android) y volvé a intentar.';
+  }
+  const details = [error?.name, error?.message].filter(Boolean).join(': ')
+    || (typeof error === 'string' ? error : '');
+  return details
+    ? `No se pudo abrir la cámara (${details}).`
+    : 'No se pudo abrir la cámara.';
 }
 
 export default function AdminQrScanner({ onEntryRegistered }) {
@@ -84,15 +91,12 @@ export default function AdminQrScanner({ onEntryRegistered }) {
     sessionRef.current = session;
     setScannerOpen(true);
     let stream;
+    let video;
 
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
-        video: {
-          facingMode: { ideal: 'environment' },
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-        },
+        video: { facingMode: { ideal: 'environment' } },
       });
       if (session !== sessionRef.current) {
         stream.getTracks().forEach((track) => track.stop());
@@ -100,19 +104,26 @@ export default function AdminQrScanner({ onEntryRegistered }) {
       }
       streamRef.current = stream;
 
-      if (session !== sessionRef.current) {
-        stream.getTracks().forEach((track) => track.stop());
-        return;
-      }
-      const video = videoRef.current || await new Promise((resolve) => {
+      video = videoRef.current || await new Promise((resolve) => {
         window.requestAnimationFrame(() => resolve(videoRef.current));
       });
       if (!video) throw new Error('No se pudo iniciar la vista previa.');
 
       video.muted = true;
       video.playsInline = true;
+      video.setAttribute('autoplay', '');
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+      video.srcObject = stream;
+      await video.play();
+
+      const { BrowserQRCodeReader } = await import('@zxing/browser');
+      if (session !== sessionRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
       const reader = new BrowserQRCodeReader();
-      const controls = await reader.decodeFromStream(stream, video, (decoded, error, activeControls) => {
+      const controls = await reader.decodeFromVideoElement(video, (decoded, error, activeControls) => {
         if (decoded && session === sessionRef.current) {
           sessionRef.current += 1;
           activeControls?.stop();
@@ -130,6 +141,7 @@ export default function AdminQrScanner({ onEntryRegistered }) {
           stream.getTracks().forEach((track) => track.stop());
           controlsRef.current = null;
           streamRef.current = null;
+          console.error('Error al decodificar QR desde la cámara:', error);
           setScanError(cameraErrorMessage(error));
           setScannerOpen(false);
         }
@@ -138,7 +150,9 @@ export default function AdminQrScanner({ onEntryRegistered }) {
       if (session === sessionRef.current) controlsRef.current = controls;
       else controls.stop();
     } catch (error) {
+      console.error('Error al iniciar el escáner QR:', error);
       stream?.getTracks().forEach((track) => track.stop());
+      if (video?.srcObject === stream) video.srcObject = null;
       streamRef.current = null;
       controlsRef.current = null;
       if (session === sessionRef.current) {
