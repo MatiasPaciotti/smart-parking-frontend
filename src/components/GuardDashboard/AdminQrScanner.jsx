@@ -117,7 +117,6 @@ export default function AdminQrScanner({ onEntryRegistered }) {
       video.srcObject = stream;
       await video.play();
 
-      const { BrowserQRCodeReader } = await import('@zxing/browser');
       if (session !== sessionRef.current) {
         stream.getTracks().forEach((track) => track.stop());
         return;
@@ -133,17 +132,6 @@ export default function AdminQrScanner({ onEntryRegistered }) {
           setScannerOpen(false);
           processCode(decoded.getText());
           return;
-        }
-        const normalDecodeErrors = ['NotFoundException', 'ChecksumException', 'FormatException'];
-        if (error && !normalDecodeErrors.includes(error.name) && session === sessionRef.current) {
-          sessionRef.current += 1;
-          activeControls?.stop();
-          stream.getTracks().forEach((track) => track.stop());
-          controlsRef.current = null;
-          streamRef.current = null;
-          console.error('Error al decodificar QR desde la cámara:', error);
-          setScanError(cameraErrorMessage(error));
-          setScannerOpen(false);
         }
       });
 
