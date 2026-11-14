@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CheckCircle2, CircleAlert, QrCode, ScanLine, X } from 'lucide-react';
 import { scanParkingQr } from '../../services/entryQrService';
+import { BrowserQRCodeReader } from '@zxing/browser';
 
 function cameraErrorMessage(error) {
   if (typeof window === 'undefined' || !window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
