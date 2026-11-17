@@ -7,6 +7,7 @@ import { getParkingLots, getParkingLotOccupancy } from '../../services/parkingLo
 import ParkingLotSelector from '../common/ParkingLotSelector';
 import OccupancyCard from '../common/OccupancyCard';
 import AdminQrScanner from './AdminQrScanner';
+import GuestVehiclesCard from './GuestVehiclesCard';
 import logo from '../../assets/logo.webp';
 
 export default function GuardDashboard() {
@@ -140,6 +141,11 @@ export default function GuardDashboard() {
           />
           <AdminQrScanner onEntryRegistered={handleEntryRegistered} />
         </div>
+        <GuestVehiclesCard
+          parkingLotId={selectedLotId}
+          occupancyData={occupancyData}
+          onChange={() => fetchOccupancy(selectedLotId)}
+        />
       </div>
     </div>
   );
