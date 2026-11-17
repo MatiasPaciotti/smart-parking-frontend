@@ -6,6 +6,7 @@ import {
   setRegisterError,
   clearError,
 } from '../../store/slices/authSlice';
+import FormInput from '../common/FormInput';
 import { registerSchema } from './validationSchema';
 import { registerUser } from '../../services/authService';
 
@@ -200,29 +201,18 @@ export default function RegisterForm({ onRegistered }) {
           )}
         </div>
 
-        <div>
-          <label className="flex items-center gap-1.5 text-xs font-medium text-slate-300 mb-1.5">
-            <Lock className="w-3.5 h-3.5 text-slate-400" />
-            Contraseña
-          </label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            disabled={loading}
-            placeholder="*********"
-            className={`w-full bg-[#162032] border rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none transition-all disabled:opacity-50 ${
-              errors.password 
-                ? 'border-rose-500 focus:ring-1 focus:ring-rose-500' 
-                : 'border-slate-700/60 focus:ring-1 focus:ring-sky-500 focus:border-sky-500'
-            }`}
-          />
-          {errors.password && (
-            <p className="text-rose-400 text-[11px] mt-1 pl-1">{errors.password}</p>
-          )}
-        </div>
+        <FormInput
+          label="Contraseña"
+          icon={Lock}
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          disabled={loading}
+          placeholder="*********"
+          error={errors.password}
+        />
         
         <div className="pt-2">
           <button
