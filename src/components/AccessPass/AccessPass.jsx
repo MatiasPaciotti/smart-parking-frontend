@@ -95,7 +95,7 @@ export default function AccessPass() {
     const parts = pass.qr_token.split('.');
     const uniquePart = parts[2] || parts[1] || pass.qr_token;
     const chars = uniquePart.replace(/[^a-zA-Z0-9]/g, '').slice(0, 8).toUpperCase();
-    return `UNSAM-${chars}`;
+    return `Código: ${chars}`;
   };
   const passCode = getPassCode();
 
@@ -149,9 +149,8 @@ export default function AccessPass() {
         <div className={`p-3 bg-white rounded-xl shadow-lg transition-opacity ${isExpired ? 'opacity-30' : ''}`}>
           <QRCodeSVG
             value={pass?.qr_token || ''}
-            size={200}
-            level="H"
-            includeMargin={false}
+            size={250}
+            level="M"
           />
         </div>
 
